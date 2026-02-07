@@ -10,10 +10,19 @@ class RecommendationController extends Controller
 {
     public function recommend(Request $request)
     {
-        $profile = $request->input('profile');
+        // HARUS user_profile karena Python butuh itu
+        $profile = $request->input('user_profile');
 
-        // Ambil semua job
-        $jobs = Job::all(['id', 'title', 'description'])->toArray();
+        if (!$profile) {
+            return response()->json([
+                "error" => "user_profile field is required"
+            ], 400);
+        }
+
+        // Ambil job + kategori
+        $jobs = Job::with('category:id,name')
+            ->get(['id', 'title', 'description', 'category_id'])
+            ->toArray();
 
         // Kirim ke Python
         $response = Http::post('http://127.0.0.1:8001/recommend', [

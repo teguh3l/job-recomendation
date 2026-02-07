@@ -19,8 +19,9 @@ const getRecommendations = async () => {
 
   try {
     const response = await axios.post("/api/recommendations", {
-      profile: profile.value,
+      user_profile: profile.value,
     });
+
 
     recommendations.value = response.data.recommendations ?? [];
   } catch (err) {
