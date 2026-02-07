@@ -1,10 +1,20 @@
 import axios from "axios";
 
-// Base URL untuk API Laravel
-axios.defaults.baseURL = "http://127.0.0.1:8000";
+const api = axios.create({
+  baseURL: "http://127.0.0.1:8000",
+  headers: {
+    "X-Requested-With": "XMLHttpRequest",
+    "Content-Type": "application/json",
+  },
+});
 
-// Header default
-axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
-axios.defaults.headers.common["Content-Type"] = "application/json";
+// Interceptor — sisipkan token otomatis setiap request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-export default axios;
+export default api;
